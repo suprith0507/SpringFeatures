@@ -1,11 +1,15 @@
 package com.example.SpringFeatures.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+@Data
 @Entity
 @Table(name="Product_Entity")
 public class ProductEntity {
@@ -29,8 +33,8 @@ public class ProductEntity {
     @UpdateTimestamp
     private LocalDateTime updationTime;
 
-    @OneToMany(mappedBy = "productIdFK",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
-    private ProductAttributesEntity productAttributes;
+    @OneToMany(mappedBy = "productEntityFK",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<ProductAttributesEntity> productAttributes =new ArrayList<>();
 
 
 

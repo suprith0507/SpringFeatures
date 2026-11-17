@@ -27,10 +27,10 @@ public class ProductController {
         this.modelMapper=modelMap;
     }
 
-    @GetMapping(path="/getProductbyID{Id}")
+    @GetMapping(path="/getProductbyID/{Id}")
     public ResponseEntity<ProductDTO> getProductsList(@PathVariable  @Valid Long Id){
 
-        return  new ResponseEntity<>(productService.getProductById(Id), HttpStatus.NOT_FOUND) ;
+        return    new ResponseEntity<>(productService.getProductById(Id),HttpStatus.OK) ;
 
     }
 }

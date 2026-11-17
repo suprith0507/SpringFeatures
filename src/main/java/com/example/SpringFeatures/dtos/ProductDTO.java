@@ -30,5 +30,5 @@ public class ProductDTO {
 
     private LocalDateTime creationTime;
 
-    private LocalDateTime upationTime;
+    private LocalDateTime updationTime;
 }

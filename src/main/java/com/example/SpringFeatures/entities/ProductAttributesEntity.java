@@ -16,7 +16,7 @@ public class ProductAttributesEntity {
 
     @ManyToOne()
     @JoinColumn(name = "productId")
-    private String productIdFK;
+    private ProductEntity productEntityFK;
 
 
 }
