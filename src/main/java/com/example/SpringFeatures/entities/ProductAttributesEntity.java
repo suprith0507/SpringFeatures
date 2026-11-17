@@ -17,6 +17,6 @@ public class ProductAttributesEntity {
     @ManyToOne()
     @JoinColumn(name = "productId")
     private ProductEntity productEntityFK;
-
+//added123
 
 }

@@ -26,6 +26,7 @@ public class ProductService {
     {
             ProductEntity productEntity= productEntityRepository.findById(productId).orElseThrow(() ->  new CustomResourceNotFoundException("Id not found Boss"));
             return modelMapper.map(productEntity , ProductDTO.class);
+            //notesddsds
 
     }
 }
