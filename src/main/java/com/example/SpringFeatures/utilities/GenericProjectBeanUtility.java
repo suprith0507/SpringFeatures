@@ -1,6 +1,9 @@
 package com.example.SpringFeatures.utilities;
 
 import com.example.SpringFeatures.Authentications.AuditorAwareImpl;
+import com.example.SpringFeatures.dtos.ProductDTO;
+import com.example.SpringFeatures.entities.ProductEntity;
+import com.example.SpringFeatures.entities.ProductJPAAuditing;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,4 +30,7 @@ public class GenericProjectBeanUtility {
     {
         return new AuditorAwareImpl();
     }
+
+    //public MapStructUtility getMapStructUtility(){return new MapStructUtility() }
+
 }

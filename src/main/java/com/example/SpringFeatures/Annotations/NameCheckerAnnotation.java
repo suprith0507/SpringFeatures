@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CustomNameValidatorClass.class)
 public @interface NameCheckerAnnotation {
+    String message() default "Product name must start with Amazon";
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Audited
+@Table(name="Product_JPAAuditing")
 public class ProductJPAAuditing  extends AuditableBaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -18,7 +22,9 @@ public class ProductJPAAuditing  extends AuditableBaseEntity{
     private String name;
 
     @Column(name="Category_Name",nullable = false)
+    @NotAudited
     private String category;
+
 
     private String secretBarcode;
 }
