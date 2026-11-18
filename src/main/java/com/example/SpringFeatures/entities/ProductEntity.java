@@ -28,7 +28,7 @@ public class ProductEntity {
 
 
     @CreationTimestamp
-    private LocalDateTime creationTime;
+    private LocalDateTime creationTime; //hibernate way of handling timestamps. cant handle users in this approach only time we can handle
 
     @UpdateTimestamp
     private LocalDateTime updationTime;

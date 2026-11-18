@@ -1,10 +1,14 @@
 package com.example.SpringFeatures.utilities;
 
+import com.example.SpringFeatures.Authentications.AuditorAwareImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
+@EnableJpaAuditing  //this is the switch to turn on JPAAuditing
 public class GenericProjectBeanUtility {
 
     @Bean
@@ -16,5 +20,11 @@ public class GenericProjectBeanUtility {
         //This one tells spring to create beans for ModelMapper and then we can autowire
         //when spring looks for Autowired annotation of ModelMapper, it will not create a bean it will give from here.
         //we need to use this approach to inject utility beans and should not use new ModelMapper() anywhere in the code. it is not the spring way of doing things
+    }
+
+    @Bean
+    public AuditorAware<String> getAuditorAware()
+    {
+        return new AuditorAwareImpl();
     }
 }
