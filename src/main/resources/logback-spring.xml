@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <!-- ===================================================== -->
+    <!-- EXTERNAL PROPERTIES                                   -->
+    <!-- ===================================================== -->
+
+    <springProperty name="APP_LOG_LEVEL"
+                    source="app.logging.level"
+                    defaultValue="INFO"/>
+
+    <springProperty name="HIBERNATE_LOG_LEVEL"
+                    source="hibernate.logging.level"
+                    defaultValue="WARN"/>
+
+    <springProperty name="SPRING_LOG_LEVEL"
+                    source="spring.logging.level"
+                    defaultValue="INFO"/>
+
+    <!-- ===================================================== -->
+    <!-- GLOBAL PROPERTIES                                     -->
+    <!-- ===================================================== -->
+
+    <property name="LOG_PATH"
+              value="C:/Users/buddh/OneDrive/Spring Workspace/Logging"/>
+
+    <property name="APP_NAME"
+              value="SpringBootFeatures1"/>
+
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{correlationId}] %-5level %logger - %msg%n"/>
+
+    <!-- ===================================================== -->
+    <!-- MAIN APPLICATION LOG FILE                             -->
+    <!-- ===================================================== -->
+
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        ${LOG_PATH}/${APP_NAME}.log
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_PATH}/archive/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <maxFileSize>100MB</maxFileSize>
+
+            <maxHistory>30</maxHistory>
+
+            <totalSizeCap>5GB</totalSizeCap>
+
+        </rollingPolicy>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- ERROR FILE                                            -->
+    <!-- ===================================================== -->
+
+    <appender name="ERROR_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        ${LOG_PATH}/${APP_NAME}-error.log
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_PATH}/archive/${APP_NAME}-error.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <maxFileSize>50MB</maxFileSize>
+
+            <maxHistory>60</maxHistory>
+
+        </rollingPolicy>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- ASYNC WRAPPER                                         -->
+    <!-- ===================================================== -->
+
+    <appender name="ASYNC"
+              class="ch.qos.logback.classic.AsyncAppender">
+
+        <queueSize>10000</queueSize>
+
+        <discardingThreshold>0</discardingThreshold>
+
+        <maxFlushTime>5000</maxFlushTime>
+
+        <appender-ref ref="FILE"/>
+
+        <appender-ref ref="ERROR_FILE"/>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- FRAMEWORK LOGGING                                     -->
+    <!-- ===================================================== -->
+
+    <logger name="org.springframework"
+            level="${SPRING_LOG_LEVEL}"/>
+
+    <logger name="org.hibernate"
+            level="${HIBERNATE_LOG_LEVEL}"/>
+
+    <logger name="org.apache.catalina"
+            level="WARN"/>
+
+    <logger name="org.apache.tomcat"
+            level="WARN"/>
+
+    <!-- ===================================================== -->
+    <!-- APPLICATION LOGGING                                   -->
+    <!-- ===================================================== -->
+
+    <logger name="com.example"
+            level="${APP_LOG_LEVEL}"/>
+
+    <!-- ===================================================== -->
+    <!-- ROOT LOGGER                                           -->
+    <!-- ===================================================== -->
+
+    <root level="INFO">
+
+        <appender-ref ref="ASYNC"/>
+
+    </root>
+
+</configuration>

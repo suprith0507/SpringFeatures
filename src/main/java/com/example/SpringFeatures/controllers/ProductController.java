@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path="/productAPI")
 public class ProductController {
 
+    Logger logger = LoggerFactory.getLogger(ProductController.class);
     private final ProductService productService;
     private final ModelMapper modelMapper;
     private final  EntityManager entityManager;
@@ -85,10 +88,17 @@ public class ProductController {
     }
 
     @GetMapping(path="/getRemoteEmployeeById")
-    public GenericAPIResponse<EmployeeDTO> getEmployeebyIdThroughRestClient(Long Id)
+    public GenericAPIResponse<EmployeeDTO> getEmployeebyIdThroughRestClient( Long eID)
     {
+
+        logger.error("info {} {}",eID,eID);
+        logger.warn("info {} {}",eID,eID);
+        logger.info("info {} {}",eID,eID);
+        logger.debug("info {} {}",eID,eID);
+        logger.trace("info {} {}",eID,eID);
+
         var employeeDTO =restClient.get().
-                uri("/getEmployeeByID/{EmployeeID}",Id).
+                uri("/getEmployeeByID/{EmployeeID}",eID).
                 retrieve().
                 onStatus(HttpStatusCode::is4xxClientError,(req,resp)->{ throw new CustomResourceNotFoundException("Boss Remote server didnt find the data requested");
                 }) .
