@@ -5,15 +5,22 @@ import com.example.SpringFeatures.dtos.ProductDTO;
 import com.example.SpringFeatures.entities.ProductEntity;
 import com.example.SpringFeatures.entities.ProductJPAAuditing;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.client.RestClient;
+
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Configuration
 @EnableJpaAuditing  //this is the switch to turn on JPAAuditing
 public class GenericProjectBeanUtility {
-
+    @Value("${employeeservice.base.url}")
+    private  String BASE_URL;
     @Bean
     public ModelMapper getModelMapperBean()
     {
@@ -31,6 +38,16 @@ public class GenericProjectBeanUtility {
         return new AuditorAwareImpl();
     }
 
-    //public MapStructUtility getMapStructUtility(){return new MapStructUtility() }
+    @Bean
+     public RestClient getRestClientBean(){
+        return RestClient.builder().
+                baseUrl(BASE_URL).
+                defaultHeader(CONTENT_TYPE,APPLICATION_JSON_VALUE).
+                defaultStatusHandler(HttpStatusCode::is5xxServerError,(req,res)->{
+                    System.out.println("Status = " + res.getStatusCode());
+                    throw new RuntimeException("Server Error Occured");
+                }).
+                build();
+    }
 
 }

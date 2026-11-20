@@ -1,17 +1,23 @@
 package com.example.SpringFeatures.controllers;
 
+import com.example.SpringFeatures.APIBeans.GenericAPIResponse;
+import com.example.SpringFeatures.dtos.EmployeeDTO;
 import com.example.SpringFeatures.dtos.ProductDTO;
 import com.example.SpringFeatures.entities.ProductJPAAuditing;
+import com.example.SpringFeatures.exceptions.CustomResourceNotFoundException;
 import com.example.SpringFeatures.services.ProductService;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,11 +29,13 @@ public class ProductController {
     private final ProductService productService;
     private final ModelMapper modelMapper;
     private final  EntityManager entityManager;
-    public ProductController(ProductService productService, ModelMapper modelMap , EntityManager entityManager)
+    private final RestClient restClient;
+    public ProductController(ProductService productService, ModelMapper modelMap , EntityManager entityManager, RestClient restClient)
     {
         this.productService=productService;
         this.modelMapper=modelMap;
         this.entityManager=entityManager;
+        this.restClient=restClient;
     }
 
     @GetMapping(path="/getProductbyID/{Id}")
@@ -62,6 +70,46 @@ public class ProductController {
                 );
          return revisions.stream().map(revisionnumber ->auditReader.find(ProductJPAAuditing.class,productId,revisionnumber)).collect(Collectors.toList());
 
+    }
+
+    @GetMapping(path="/getRemoteEmployees")
+    public GenericAPIResponse<List<EmployeeDTO>> getAllEmployeesThroughRestClient()
+    {
+        GenericAPIResponse<List<EmployeeDTO>> employeeDTOList =restClient.get().
+                                      uri("/getAllEmployees").
+                                      retrieve().
+                                      onStatus(HttpStatusCode::is4xxClientError,(req,resp)->{ throw new CustomResourceNotFoundException("Boss Remote server didnt find the data requested");
+                                      }) .
+                                      body( new ParameterizedTypeReference<>(){});
+        return employeeDTOList;
+    }
+
+    @GetMapping(path="/getRemoteEmployeeById")
+    public GenericAPIResponse<EmployeeDTO> getEmployeebyIdThroughRestClient(Long Id)
+    {
+        var employeeDTO =restClient.get().
+                uri("/getEmployeeByID/{EmployeeID}",Id).
+                retrieve().
+                onStatus(HttpStatusCode::is4xxClientError,(req,resp)->{ throw new CustomResourceNotFoundException("Boss Remote server didnt find the data requested");
+                }) .
+                body( new ParameterizedTypeReference<>(){});
+        return  new GenericAPIResponse(employeeDTO);
+    }
+    @PostMapping(path="/createRemoteEmployee")
+    public ResponseEntity<EmployeeDTO> createEmployeeThroughRestClient(@RequestBody EmployeeDTO employeeDTO)
+    {
+        ResponseEntity<EmployeeDTO> employeeDTO1 =restClient.post().
+                uri("/saveEmployee").
+                body(employeeDTO).
+                retrieve().
+                onStatus(HttpStatusCode::is4xxClientError,(req,resp)->{
+                    System.out.println("Status = " + resp.getStatusCode());
+                    throw new CustomResourceNotFoundException("Boss Remote server didnt find the data requested");
+                }) .
+                //body( new ParameterizedTypeReference<>(){});
+                toEntity(EmployeeDTO.class); //we can use like this also and return response entity
+        //return  new GenericAPIResponse(employeeDTO1);
+        return employeeDTO1;
     }
 
 }
