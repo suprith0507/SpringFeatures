@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class GenericExceptionHandler {
 
     @ExceptionHandler(CustomResourceNotFoundException.class)
